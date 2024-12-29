@@ -13,7 +13,6 @@ function Provider({children}) {
     const result=await axios.post('/api/user',{
       user:user
     })
-    console.log("result",result.data);
   }
   return (
     <div>
