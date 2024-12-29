@@ -25,9 +25,12 @@ function Header() {
         <h2 className='font-bold text-lg bg-black text-white px-2 p-1'>Pixel Vault</h2>
         <ul className='hidden md:flex gap-5'>
         {MenuList.map((menu, index) => (
+            <Link key={index} href={menu?.path}>
+
     <li key={index} className='px-2 p-1 cursor-pointer hover:border-2 hover:border-white'>
         {menu?.name}
     </li>
+            </Link>
 ))}
 
         </ul>

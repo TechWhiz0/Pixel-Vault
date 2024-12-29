@@ -15,10 +15,6 @@ export async function POST(req) {
     const file = formData.get("file");
     const data = JSON.parse(formData.get("data"));
 
-    console.log("Image:", image);
-    console.log("File:", file);
-    console.log("Data:", data);
-
     // Save image and file to Firebase storage (mocked here)
     const imageName=Date.now()+".png";
     const storageref=ref(storage,"file/"+imageName)
@@ -48,9 +44,6 @@ export async function POST(req) {
         message:data?.message,
         createdBy:data?.userEmail
     }).returning(productsTable)
-    // Save product details to the database
-    // Example: await db.collection("products").insertOne({ ...data, imageUrl, fileUrl });
-
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error processing form data:", error);
@@ -63,14 +56,28 @@ export async function GET(req){
 
     const {searchParams}=new URL(req.url)
     const email=searchParams.get("email")
-    const result=await db.select({
+    const limit=searchParams.get('limit')
+
+    if(email){
+      const result=await db.select({
         ...getTableColumns(productsTable),
         user:{
             name:usersTable.name,
             image:usersTable.image
         }
     }).from(productsTable).innerJoin(usersTable,eq(productsTable.createdBy,usersTable.email)).where(eq(productsTable.createdBy,email)).orderBy(desc(productsTable.id))
-    console.log(result);
+    return NextResponse.json(result)
 
+    }
+
+    const result=await db.select({
+      ...getTableColumns(productsTable),
+      user:{
+          name:usersTable.name,
+          image:usersTable.image
+      }
+  }).from(productsTable).innerJoin(usersTable,eq(productsTable.createdBy,usersTable.email)).orderBy(desc(productsTable.id)).limit(limit)
+
+ 
     return NextResponse.json(result)
 }

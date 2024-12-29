@@ -11,9 +11,9 @@ function ProductCarditem({ product,editable=false }) {
     <div>
       <Card className="p-3"> 
         {/* Product Image */}
-        <Image src={product?.imageUrl} alt={product?.title} width={500} height={300} />
+        <Image className='h-[180px] object-cover' src={product?.imageUrl} alt={product?.title} width={500} height={300} />
         <div className="mt-3">
-          <h2 className="font-bold text-xl">{product?.title || 'Unknown Product'}</h2>
+          <h2 className="font-bold line-clamp-1 text-xl">{product?.title || 'Unknown Product'}</h2>
           <h2 className="font-bold text-2xl text-yellow-500">₹{product?.price || '0.00'}</h2>
           <div className="mt-3 md:flex justify-between items-center">
             <div className="flex gap-2 items-center">

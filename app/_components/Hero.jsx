@@ -15,7 +15,9 @@ function Hero() {
             Join a growing family of 45,000 designers, creators, and makers from around the world.
           </p>
           <div className='flex gap-5 mt-8'>
+            <Link href={'/explore'}>
             <Button >Explore</Button>
+            </Link>
             <Link href={'/dashboard'}>
             <Button className="bg-red-500">Sell</Button>
             </Link>
