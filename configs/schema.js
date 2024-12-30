@@ -19,3 +19,10 @@ export const productsTable = pgTable("products", {
   message: varchar({ length: 255 }),
   createdBy: varchar({ length: 255 }).notNull().references(() => usersTable.email),
 });
+
+
+export const cartTable = pgTable("cart", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  email: varchar({ length: 255 }).notNull().references(() => usersTable.email),
+  productId: integer().notNull().references(() => productsTable.id),
+});

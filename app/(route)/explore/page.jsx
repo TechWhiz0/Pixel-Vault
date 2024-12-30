@@ -5,11 +5,17 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import SortProducts from '@/app/_components/SortProducts';
 
 function Explore() {
   const [productList, setProductList] = useState([]); // Initialize as an empty array
   const [offset, setOffset] = useState(0);
   const [searchInput, setSearchInput] = useState('');
+  const [sort, setSort] = useState({
+    label: "NEWEST",
+    field: "id",  // Ensure 'id' matches a valid column in the database
+    order: "desc",
+  });
 
   useEffect(() => {
     GetProductList(0, true); // Fetch data on component mount
@@ -21,6 +27,7 @@ function Explore() {
         limit: 6,
         offset: offset_,
         searchText: searchInput,
+        sort:sort??[]
       });
       console.log("Fetched products:", result.data);
 
@@ -43,10 +50,17 @@ function Explore() {
     GetProductList(0, true); // Fetch data and reset the product list
   };
 
+  useEffect(()=>{
+    if(sort){
+      setProductList([])
+      GetProductList(0)
+    }
+  },[sort])
+
   return (
     <div className="mt-10">
       <h2 className="font-bold text-3xl">Explore</h2>
-      <div className="mt-5 mb-5">
+      <div className="mt-5 mb-5 flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <h2 className="font-medium">Search:</h2>
           <Input
@@ -60,6 +74,7 @@ function Explore() {
             Search
           </Button>
         </div>
+        <SortProducts onSortChange={(value)=>setSort(value)}/>
       </div>
       <DisplayProductList productList={productList} />
       <div className="flex items-center justify-center mt-10">

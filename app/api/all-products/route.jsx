@@ -1,31 +1,50 @@
 import { db } from "@/configs/db";
 import { productsTable, usersTable } from "@/configs/schema";
-import { desc, eq, getTableColumns, like } from "drizzle-orm";
+import { asc, desc, eq, getTableColumns, like } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-    try {
-      const { limit,offset,searchText } = await req.json();
-      console.log("Limit received:", limit);
-  
-      const result = await db
-        .select({
-          ...getTableColumns(productsTable),
-          user: {
-            name: usersTable.name,
-            image: usersTable.image,
-          },
-        })
-        .from(productsTable)
-        .innerJoin(usersTable, eq(productsTable.createdBy, usersTable.email))
-        .orderBy(desc(productsTable.id))
-        .limit(Number(limit)).offset(offset).where(like(productsTable.title,'%'+searchText+'%'))
-  
-      console.log("Query result:", result);
-      return NextResponse.json(result);
-    } catch (error) {
-      console.error("API Error:", error);
-      return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+  try {
+    const { limit = 10, offset = 0, searchText = '', sort} = await req.json();
+    
+    // Validate sort field exists on productsTable to prevent SQL injection
+    if (!productsTable[sort.field]) {
+      return NextResponse.json(
+        { error: "Invalid sort field" },
+        { status: 400 }
+      );
     }
+
+    const result = await db
+      .select({
+        ...getTableColumns(productsTable),
+        user: {
+          name: usersTable.name,
+          image: usersTable.image,
+        },
+      })
+      .from(productsTable)
+      .innerJoin(
+        usersTable, 
+        eq(productsTable.createdBy, usersTable.email)
+      )
+      .where(
+        like(productsTable.title, `%${searchText}%`)
+      )
+      .orderBy(
+        sort.order === 'desc' 
+          ? desc(productsTable[sort.field]) 
+          : asc(productsTable[sort.field])
+      )
+      .limit(Number(limit))
+      .offset(Number(offset));
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch products" }, 
+      { status: 500 }
+    );
   }
-  
+}

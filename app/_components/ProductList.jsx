@@ -1,8 +1,6 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import React, { useEffect, useState } from 'react'
-import Products from '../_mockData/Products'
-import ProductCarditem from './ProductCarditem'
 import axios from 'axios'
 import Link from 'next/link'
 import DisplayProductList from './DisplayProductList'
@@ -17,7 +15,6 @@ function ProductList() {
 
   const GetProductList=async()=>{
     const result=await axios.get('/api/products?limit=9')
-    console.log(result);
     setProductList(result.data)
   }
 

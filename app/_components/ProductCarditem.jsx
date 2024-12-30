@@ -1,14 +1,29 @@
+"use client"
 import { Card } from '@/components/ui/card'
-import React from 'react'
+import React, { useContext ,useState} from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { MoreVerticalIcon } from 'lucide-react';
 import ProductEditableOption from './ProductEditableOption';
+import Link from 'next/link';
+import axios from 'axios';
+import { CartContext } from '../_context/CartContext'
 
 
-function ProductCarditem({ product,editable=false }) {
+function ProductCarditem({ product,editable=false ,user}) {
+  const {cart,setCart}=useContext(CartContext)
+  const[loading,setLoading]=useState(false)
+  const AddToCart=async()=>{
+    setLoading(true)
+    const result=await axios.post('/api/cart',{
+      email:user?.primaryEmailAddress?.emailAddress,
+      productId:product?.id
+    })
+    setCart((cart=>[...cart,product]))
+    setLoading(false)
+  }
   return (
-    <div>
+    <Link href={'/explore/'+product.id}>
       <Card className="p-3"> 
         {/* Product Image */}
         <Image className='h-[180px] object-cover' src={product?.imageUrl} alt={product?.title} width={500} height={300} />
@@ -27,7 +42,7 @@ function ProductCarditem({ product,editable=false }) {
               />
               <h2 className="text-sm text-gray-400">{product?.user?.name || 'Unknown User'}</h2>
             </div>
-           {!editable?<Button size="sm" className="mt-1">Add to Cart</Button>:
+           {!editable?<Button size="sm" disabled={loading} onClick={AddToCart} className="mt-1">Add to Cart</Button>:
            <ProductEditableOption>
             <MoreVerticalIcon/>
            </ProductEditableOption>
@@ -35,7 +50,7 @@ function ProductCarditem({ product,editable=false }) {
           </div>
         </div>
       </Card>
-    </div>
+    </Link>
   );
 }
 

@@ -57,6 +57,7 @@ export async function GET(req){
     const {searchParams}=new URL(req.url)
     const email=searchParams.get("email")
     const limit=searchParams.get('limit')
+    const id=searchParams.get('id')
 
     if(email){
       const result=await db.select({
@@ -69,6 +70,19 @@ export async function GET(req){
     return NextResponse.json(result)
 
     }
+    if(id){
+
+      const result=await db.select({
+        ...getTableColumns(productsTable),
+        user:{
+            name:usersTable.name,
+            image:usersTable.image
+        }
+    }).from(productsTable).innerJoin(usersTable,eq(productsTable.createdBy,usersTable.email)).where(eq(productsTable.id,id)).orderBy(desc(productsTable.id))
+  
+   
+      return NextResponse.json(result[0])
+    }
 
     const result=await db.select({
       ...getTableColumns(productsTable),
@@ -80,4 +94,5 @@ export async function GET(req){
 
  
     return NextResponse.json(result)
+
 }
