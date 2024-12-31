@@ -5,6 +5,7 @@ import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import React, { useContext } from "react";
 import { CartContext } from "../_context/CartContext";
+import CartList from "./CartList";
 
 function Header() {
   const MenuList = [
@@ -41,10 +42,13 @@ function Header() {
         ))}
       </ul>
       <div className="flex gap-5 items-center">
+        <CartList>
+
         <div className="flex rounded-full py-1 items-center">
           <ShoppingBag />
           <Badge className="bg-black text-white hover:bg-black">{cart?.length}</Badge>
         </div>
+        </CartList>
         <Link href={"/dashboard"}>
           <Button className="bg-red-500 hover:bg-red-600">Start Selling</Button>
         </Link>

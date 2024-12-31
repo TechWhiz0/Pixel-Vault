@@ -8,6 +8,7 @@ import ProductEditableOption from './ProductEditableOption';
 import Link from 'next/link';
 import axios from 'axios';
 import { CartContext } from '../_context/CartContext'
+import AddToCartBtn from './AddToCartBtn'
 
 
 function ProductCarditem({ product,editable=false ,user}) {
@@ -15,11 +16,12 @@ function ProductCarditem({ product,editable=false ,user}) {
   const[loading,setLoading]=useState(false)
   const AddToCart=async()=>{
     setLoading(true)
+    setCart((cart=>[...cart,product]))
     const result=await axios.post('/api/cart',{
       email:user?.primaryEmailAddress?.emailAddress,
       productId:product?.id
     })
-    setCart((cart=>[...cart,product]))
+    
     setLoading(false)
   }
   return (
@@ -42,11 +44,7 @@ function ProductCarditem({ product,editable=false ,user}) {
               />
               <h2 className="text-sm text-gray-400">{product?.user?.name || 'Unknown User'}</h2>
             </div>
-           {!editable?<Button size="sm" disabled={loading} onClick={AddToCart} className="mt-1">Add to Cart</Button>:
-           <ProductEditableOption>
-            <MoreVerticalIcon/>
-           </ProductEditableOption>
-           } 
+           <AddToCartBtn product={product} editable={editable}/>
           </div>
         </div>
       </Card>

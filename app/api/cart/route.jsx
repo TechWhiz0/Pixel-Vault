@@ -17,9 +17,17 @@ export async function GET(req){
     const email=searchParams.get('email')
     const result=await db.select(
     {
-        ...getTableColumns(productsTable)
+        ...getTableColumns(productsTable),
+        ...getTableColumns(cartTable)
     }
     ).from(cartTable).innerJoin(productsTable,eq(cartTable.productId,productsTable.id)).where(eq(cartTable.email,email))
 
     return NextResponse.json(result)
+}
+
+export async function DELETE(req){
+    const {searchParams}=new URL(req.url)
+    const recordId=searchParams.get('recordId')
+    const result=await db.delete(cartTable).where(eq(cartTable.id,recordId))
+    return NextResponse.json({resp:'Deleted!!!'})
 }

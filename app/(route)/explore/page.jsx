@@ -29,8 +29,6 @@ function Explore() {
         searchText: searchInput,
         sort:sort??[]
       });
-      console.log("Fetched products:", result.data);
-
       // Reset product list if starting a new search
       if (reset) {
         setProductList(result.data);

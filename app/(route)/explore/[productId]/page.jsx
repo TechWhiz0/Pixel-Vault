@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import SimilarProduct from "./_components/SimilarProduct";
 import { ChevronLeftIcon } from "lucide-react";
+import AddToCartBtn from "@/app/_components/AddToCartBtn";
 
 function ProductDetail() {
   const { productId } = useParams();
@@ -70,9 +71,8 @@ function ProductDetail() {
               The {product?.category} will be sent to your registered email ID
               once you purchase this digital content.
             </p>
-            <Button className="w-full" size="lg">
-              Add to cart
-            </Button>
+           
+            <AddToCartBtn product={product} size="lg" />
 
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">

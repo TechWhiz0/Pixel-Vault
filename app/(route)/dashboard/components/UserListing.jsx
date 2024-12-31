@@ -27,7 +27,6 @@ function UserListing() {
         }
   
         const result = await axios.get(`/api/products?email=${email}`);
-        console.log("API Response:", result);
         setListing(result?.data); // Ensure `data` is the correct key.
     
       } catch (error) {

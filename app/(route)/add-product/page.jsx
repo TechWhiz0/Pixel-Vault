@@ -45,7 +45,6 @@ function AddProduct() {
       ...prev,
       [fieldName]:fieldValue
     }))
-    console.log(formData);
   }
 
   const onAddProductButtonClick = async () => {
@@ -69,7 +68,6 @@ function AddProduct() {
       toast("New product added successfully!");
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error adding product:", error.response?.data || error.message);
       toast.error("Failed to add product. Please try again.");
     } finally {
       setLoading(false); // End loading after request completion
