@@ -28,7 +28,7 @@ function AddToCartBtn({ editable, size = "sm" ,product}) {
                     Add to Cart
                 </Button>
             ) : (
-                <ProductEditableOption>
+                <ProductEditableOption product={product}>
                     <MoreVerticalIcon />
                 </ProductEditableOption>
             )}

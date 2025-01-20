@@ -14,10 +14,6 @@ function Header() {
       path: "/",
     },
     {
-      name: "Store",
-      path: "/store",
-    },
-    {
       name: "Explore",
       path: "/explore",
     },

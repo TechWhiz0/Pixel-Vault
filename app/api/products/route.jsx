@@ -1,7 +1,8 @@
 import { db } from "@/configs/db";
 import { storage } from "@/configs/firebaseConfig";
 import { productsTable, usersTable } from "@/configs/schema";
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { currentUser } from "@clerk/nextjs/server";
+import {and, desc, eq, getTableColumns } from "drizzle-orm";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { NextResponse } from "next/server";
 
@@ -95,4 +96,50 @@ export async function GET(req){
  
     return NextResponse.json(result)
 
+}
+
+export async function DELETE(req) {
+  try {
+    // Parse the request body
+    const {searchParams}=new URL(req.url)
+    const productId=searchParams.get('productId')
+    console.log("this is from backend",productId)
+
+    // Get the current user
+    const user = await currentUser();
+
+    // Validate input and user
+    if (!productId) {
+      return NextResponse.json(
+        { success: false, error: "Product ID is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      return NextResponse.json(
+        { success: false, error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    // Perform the delete operation
+    const result = await db
+      .delete(productsTable)
+      .where(
+        and(
+          eq(productsTable.id, productId),
+          eq(productsTable.createdBy, user.primaryEmailAddress.emailAddress)
+        )
+      );
+
+    // Return success response
+    return NextResponse.json({ success: true, result: "Deleted!" });
+  } catch (error) {
+    console.error("Error deleting product:", error.message);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete product" },
+      { status: 500 }
+    );
+  }
 }
